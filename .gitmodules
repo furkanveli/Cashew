@@ -1,0 +1,3 @@
+[submodule "CashewEngine/TPD/spdlog"]
+	path = CashewEngine/TPD/spdlog
+	url = https://github.com/gabime/spdlog.git
