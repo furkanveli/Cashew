@@ -61,7 +61,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)CashewEngine\src;$(SolutionDir)CashewEngine\TPD\spdlog\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>

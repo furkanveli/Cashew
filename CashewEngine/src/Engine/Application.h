@@ -16,7 +16,9 @@ namespace Cashew
 	// this is going to be defined in client
 	Application* CreateApplication();
 
+	// this is going to be defined in client as well
+	void CreateConsole();
+
 
 }//namespace end
 
-void Print();
