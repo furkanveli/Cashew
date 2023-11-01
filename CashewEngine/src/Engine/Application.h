@@ -9,15 +9,15 @@ namespace Cashew
 	public:
 		Application();
 		virtual ~Application();
-
-		void Run();
+		virtual void Init();
+		virtual void Run();
 	};
 
 	// this is going to be defined in client
 	Application* CreateApplication();
 
 	// this is going to be defined in client as well
-	void CreateConsole();
+	void CASHEW_API CreateConsole();
 
 
 }//namespace end
