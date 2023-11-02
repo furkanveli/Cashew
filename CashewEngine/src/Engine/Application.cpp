@@ -8,7 +8,7 @@ namespace Cashew
 
 
 	Application::Application()
-		:m_window(L"Cashew Window", L"CashewClass", 800, 600)
+		:m_window(L"Cashew Application Window", L"CashewClass", 800, 600)
 	{
 	}
 
