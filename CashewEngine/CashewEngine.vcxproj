@@ -16,10 +16,12 @@
     <ClInclude Include="src\Engine\Application.h" />
     <ClInclude Include="src\Engine\EntryPoint.h" />
     <ClInclude Include="src\Engine\Macros.h" />
+    <ClInclude Include="src\Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Log.cpp" />
     <ClCompile Include="src\Engine\Application.cpp" />
+    <ClCompile Include="src\Engine\Window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

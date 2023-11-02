@@ -15,8 +15,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 {
 	auto app = Cashew::CreateApplication();
 	app->Init();
-	app->Run();
+	int result = app->Run();
 	delete app;
+	return result;
 }
 #else
 int main(int argc, char** argv)

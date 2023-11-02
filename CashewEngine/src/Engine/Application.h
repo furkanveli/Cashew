@@ -1,6 +1,6 @@
 #pragma once
 #include "Macros.h"
-
+#include "Window.h"
 
 namespace Cashew
 {
@@ -10,7 +10,9 @@ namespace Cashew
 		Application();
 		virtual ~Application();
 		virtual void Init();
-		virtual void Run();
+		virtual int Run();
+	private:
+		Window m_window;
 	};
 
 	// this is going to be defined in client

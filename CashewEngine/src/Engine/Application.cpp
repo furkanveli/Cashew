@@ -1,12 +1,14 @@
 #include "Application.h"
 #include <iostream>
 #include <sstream>
+#include "Window.h"
 #include "Log.h"
 namespace Cashew
 {
 
 
 	Application::Application()
+		:m_window(L"Cashew Window", L"CashewClass", 800, 600)
 	{
 	}
 
@@ -15,12 +17,16 @@ namespace Cashew
 	}
 
 	
-	void Application::Run()
+	int Application::Run()
 	{
 		while (true)
 		{
+			if (const auto exitCode = Window::ProcessMessages())
+			{
+				return *exitCode;
+			}
 		}
-			
+		return 0;
 	}
 
 	void Application::Init()
