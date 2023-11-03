@@ -4,6 +4,11 @@ bin/
 bin-int/
 
 
+*.suo
+*.user
+*.vcxproj
+*.vcxproj.filters
+*.sln
 
 
 # Prerequisites
