@@ -41,7 +41,7 @@ namespace Cashew
 		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
 		// Create window and get window handle
-		m_hwnd = CreateWindow(m_ClassName, m_Name, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT,
+		m_hwnd = CreateWindowW(m_ClassName, m_Name, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 850, 200,
 			wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, m_hInst, this);
 
 		ShowWindow(m_hwnd, SW_SHOWDEFAULT);
