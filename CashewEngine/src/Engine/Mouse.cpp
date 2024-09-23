@@ -6,37 +6,37 @@
 
 namespace Cashew
 {
-	std::pair<int, int> Mouse::GetPos() const noexcept
+	std::pair<int, int> Mouse::GetPos() const 
 	{
 		return { m_x,m_y };
 	}
 
-	int Mouse::GetPosX() const noexcept
+	int Mouse::GetPosX() const 
 	{
 		return m_x;
 	}
 
-	int Mouse::GetPosY() const noexcept
+	int Mouse::GetPosY() const 
 	{
 		return m_y;
 	}
 
-	bool Mouse::IsInWindow() const noexcept
+	bool Mouse::IsInWindow() const 
 	{
 		return m_isInWindow;
 	}
 
-	bool Mouse::LeftIsPressed() const noexcept
+	bool Mouse::LeftIsPressed() const 
 	{
 		return m_leftIsPressed;
 	}
 
-	bool Mouse::RightIsPressed() const noexcept
+	bool Mouse::RightIsPressed() const 
 	{
 		return m_rightIsPressed;
 	}
 
-	Mouse::Event Mouse::Read() noexcept
+	Mouse::Event Mouse::Read() 
 	{
 		if (m_buffer.size() > 0u)
 		{
@@ -50,12 +50,12 @@ namespace Cashew
 		}
 	}
 
-	void Mouse::Flush() noexcept
+	void Mouse::Flush() 
 	{
 		m_buffer = std::queue<Event>();
 	}
 
-	void Mouse::OnMouseMove(int newx, int newy) noexcept
+	void Mouse::OnMouseMove(int newx, int newy) 
 	{
 		m_x = newx;
 		m_y = newy;
@@ -64,21 +64,21 @@ namespace Cashew
 		TrimBuffer();
 	}
 
-	void Mouse::OnMouseLeave() noexcept
+	void Mouse::OnMouseLeave() 
 	{
 		m_isInWindow = false;
 		m_buffer.push(Mouse::Event(Mouse::Event::Type::Leave, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::OnMouseEnter() noexcept
+	void Mouse::OnMouseEnter() 
 	{
 		m_isInWindow = true;
 		m_buffer.push(Mouse::Event(Mouse::Event::Type::Enter, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::OnLeftPressed(int x, int y) noexcept
+	void Mouse::OnLeftPressed(int x, int y) 
 	{
 		m_leftIsPressed = true;
 
@@ -86,7 +86,7 @@ namespace Cashew
 		TrimBuffer();
 	}
 
-	void Mouse::OnLeftReleased(int x, int y) noexcept
+	void Mouse::OnLeftReleased(int x, int y) 
 	{
 		m_leftIsPressed = false;
 
@@ -94,7 +94,7 @@ namespace Cashew
 		TrimBuffer();
 	}
 
-	void Mouse::OnRightPressed(int x, int y) noexcept
+	void Mouse::OnRightPressed(int x, int y) 
 	{
 		m_rightIsPressed = true;
 
@@ -102,7 +102,7 @@ namespace Cashew
 		TrimBuffer();
 	}
 
-	void Mouse::OnRightReleased(int x, int y) noexcept
+	void Mouse::OnRightReleased(int x, int y) 
 	{
 		m_rightIsPressed = false;
 
@@ -110,19 +110,19 @@ namespace Cashew
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelUp(int x, int y) noexcept
+	void Mouse::OnWheelUp(int x, int y) 
 	{
 		m_buffer.push(Mouse::Event(Mouse::Event::Type::WheelUp, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelDown(int x, int y) noexcept
+	void Mouse::OnWheelDown(int x, int y) 
 	{
 		m_buffer.push(Mouse::Event(Mouse::Event::Type::WheelDown, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::TrimBuffer() noexcept
+	void Mouse::TrimBuffer() 
 	{
 		while (m_buffer.size() > m_bufferSize)
 		{
@@ -130,7 +130,7 @@ namespace Cashew
 		}
 	}
 
-	void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
+	void Mouse::OnWheelDelta(int x, int y, int delta) 
 	{
 		m_wheelDeltaCarry += delta;
 		// generate events for every 120 

@@ -3,6 +3,7 @@
 #include <sstream>
 #include "Window.h"
 #include "Log.h"
+#include "CashewError.h"
 namespace Cashew
 {
 
