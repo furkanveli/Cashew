@@ -13,13 +13,14 @@ namespace Cashew
 		virtual int Run();
 	private:
 		Window m_window;
+		HWND m_consoleHandle;
 	};
 
 	// this is going to be defined in client
 	Application* CreateApplication();
 
 	// this is going to be defined in client as well
-	void CASHEW_API CreateConsole();
+	HWND CASHEW_API CreateConsole();
 
 
 }//namespace end

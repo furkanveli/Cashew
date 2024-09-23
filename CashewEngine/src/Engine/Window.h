@@ -1,15 +1,18 @@
 #pragma once
-#include "Macros.h"
-#include "Log.h"
 #include <Windows.h>
 #include <optional>
+#include <sstream>
+#include "Macros.h"
+#include "Mouse.h"
+#include "Keyboard.h"
+#include "Log.h"
 
 namespace Cashew
 {
 	class CASHEW_API Window
 	{
 	public:
-		Window();
+		Window() = default;
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -23,6 +26,9 @@ namespace Cashew
 		HWND m_hwnd;
 		WNDCLASSEX m_windowClass;
 
+	public:
+		Keyboard kbd;
+		Mouse mouse;
 	private:
 		LPCWSTR GetName();
 		LPCWSTR GetWindowClassName();
@@ -34,7 +40,8 @@ namespace Cashew
 		LRESULT HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	public:
-		static std::optional<int> ProcessMessages();
+		std::optional<int> ProcessMessages();
+		void SetTitle(const std::string& title);
 	};
 
 
