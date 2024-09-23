@@ -1,6 +1,4 @@
-#include <iostream>
 #include <CashewEngine.h>
-#include "Engine/EntryPoint.h"
 
 class Game : public Cashew::Application
 {
@@ -18,7 +16,7 @@ public:
 
 // This is where the client implements the CreateApplication to return an application that inherits from Cashew::Application.
 // Application is created on the heap because it is necessary to keep track of the memory.
-Cashew::Application* Cashew::CreateApplication()
+ std::unique_ptr<Cashew::Application> Cashew::CreateApplication()
 {
-	return new Game();
+	return std::make_unique<Game>();
 }

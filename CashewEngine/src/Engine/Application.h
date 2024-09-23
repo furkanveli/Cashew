@@ -17,7 +17,7 @@ namespace Cashew
 	};
 
 	// this is going to be defined in client
-	Application* CreateApplication();
+	std::unique_ptr<Application> CreateApplication();
 
 	// this is going to be defined in client as well
 	HWND CASHEW_API CreateConsole();
