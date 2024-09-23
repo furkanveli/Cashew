@@ -21,7 +21,7 @@ namespace Cashew
 	{
 		while (true)
 		{
-			if (const auto exitCode = Window::ProcessMessages())
+			if (const auto exitCode = m_window.ProcessMessages())
 			{
 				return *exitCode;
 			}
@@ -40,7 +40,7 @@ namespace Cashew
 #endif
 	}
 
-	void CASHEW_API Cashew::CreateConsole()
+	HWND CASHEW_API Cashew::CreateConsole()
 	{
 		// Allocate a console for this application
 		AllocConsole();
@@ -54,8 +54,9 @@ namespace Cashew
 		SetConsoleTitle(L"Cashew Console");
 
 		// Move the console window to a convenient position
-		HWND consoleWindow = GetConsoleWindow();
-		SetWindowPos(consoleWindow, 0, 0, 0, 800, 600, SWP_SHOWWINDOW);
+		
+		SetWindowPos(GetConsoleWindow(), 0, 0, 0, 800, 600, SWP_SHOWWINDOW);
+		return GetConsoleWindow();
 	}
 
 }//end namespace
