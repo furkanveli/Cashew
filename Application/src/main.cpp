@@ -10,17 +10,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 		int result = app->Run();
 		return result;
 	}
-	catch (const Cashew::CashewError& e)
+	catch (Cashew::CashewError& e)
 	{
-		MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxW(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
 	}
-	catch (const std::exception& e)
+	catch (std::exception& e)
 	{
 		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (...)
 	{
-		MessageBoxA(nullptr, "Unspecified Error, No details available", "Unknown exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxW(nullptr, L"Unspecified Error, No details available", L"Unknown exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	return -1;
 }

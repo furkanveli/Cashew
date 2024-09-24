@@ -2,6 +2,7 @@
 
 
 #include "Mouse.h"
+#include "Log.h"
 #include <Windows.h>
 
 namespace Cashew

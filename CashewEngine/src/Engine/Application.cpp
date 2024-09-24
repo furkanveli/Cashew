@@ -52,7 +52,7 @@ namespace Cashew
 		freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
 
 		// Set the console window title
-		SetConsoleTitle(L"Cashew Console");
+		SetConsoleTitleW(L"Cashew Console");
 
 		// Move the console window to a convenient position
 		

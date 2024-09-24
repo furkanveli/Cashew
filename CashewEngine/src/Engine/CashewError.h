@@ -6,39 +6,60 @@
 #include <sstream>
 namespace Cashew
 {
-	class CASHEW_API CashewError : public std::exception
+	class CASHEW_API CashewError
 	{
 	public:
-		enum class ErrorType 
-		{
-			stdError,
-			WindowError,
-			GraphicsError,
-			DevicedRemovedException,
-			Unspecified
-		};
+		CashewError(int line, const wchar_t* file); // constructor for standard error
+		const wchar_t* what();
 
-	public:
-		CashewError(int line, const char* file, ErrorType type) noexcept;
-		CashewError(int line, const char* file, ErrorType type, HRESULT hr) noexcept;
-		const char* what() const noexcept override;
+		// to be overridden
+		virtual std::wstring GetErrorString();
+		virtual const wchar_t* GetType();
 
 		// member getters
-		int GetLine() const noexcept;
-		const std::string& GetFile() const noexcept;
-		const char* GetType() const noexcept;
-		HRESULT GetErrorCode() const noexcept;
+		int GetLine();
+		const std::wstring& GetFile();
 
-		// convenience funtions
-		std::string GetErrorString() const noexcept;
+	protected:
+		int m_line;
+		std::wstring m_file;
+		std::wstring m_whatBuffer;
+	};
 
+	class CASHEW_API CashewWindowError : public CashewError
+	{
+	public:
+		CashewWindowError(int line, const wchar_t* file, HRESULT hr);
+		HRESULT GetErrorCode();
+
+		// overrides
+		std::wstring GetErrorString() override;
+		const wchar_t* GetType() override;
 
 	private:
-		int line;
-		std::string file;
-		ErrorType type = ErrorType::Unspecified;
-		HRESULT hr;
-		mutable std::string whatBuffer;
-
+		HRESULT m_hr;
 	};
+
+
+	inline std::wstring ToWstring(const std::string& str)
+	{
+		int size_needed = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, nullptr, 0);
+		std::wstring wstr(size_needed, 0);
+		MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &wstr[0], size_needed);
+		return wstr;
+	}
 }
+
+
+// Exception handling macros
+
+#define ERR_STD() CashewError(__LINE__, ToWstring(__FILE__).c_str());
+#define ERR_WND( hr ) CashewWindowError(__LINE__, ToWstring(__FILE__).c_str(), hr);
+
+#ifndef ThrowIfWin
+#define ThrowIfWin(x) \
+    if (!x) { \
+        DWORD errorCode = GetLastError(); \
+        throw ERR_WND(errorCode); \
+    }
+#endif
