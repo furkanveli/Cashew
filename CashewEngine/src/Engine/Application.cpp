@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Log.h"
 #include "CashewError.h"
+
 namespace Cashew
 {
 
@@ -20,14 +21,55 @@ namespace Cashew
 	
 	int Application::Run()
 	{
+		Init();
+		m_window.m_timer.Clear();
 		while (true)
 		{
 			if (const auto exitCode = m_window.ProcessMessages())
 			{
 				return *exitCode;
 			}
+			
+			Render(m_window.m_timer);
 		}
 		return 0;
+	}
+
+	void Application::Render(const CashewTimer& timer)
+	{
+		m_window.m_timer.Tick();
+		CalcFPS();
+
+		std::wstringstream os;
+		os << "Mouse X: " << m_window.mouse.GetPosX() << " " << "Mouse Y: " << m_window.mouse.GetPosY();
+		m_window.SetTitle(os.str());
+
+	}
+
+	std::wstring Application::CalcFPS()
+	{
+
+		static int frameCnt = 0;
+		static float timeElapsed = 0.0f;
+		std::wstring fpsText;
+		frameCnt++;
+		if (m_window.m_timer.TotalTime() - timeElapsed >= 1.0f)
+		{
+			float fps = (float)frameCnt; // fps = frameCnt / 1
+			float mspf = 1000.0f / fps;
+
+			std::wstring fpsStr = std::to_wstring(fps);
+			std::wstring mspfStr = std::to_wstring(mspf);
+
+			fpsText = L"    fps: " + fpsStr + L"   mspf: " + mspfStr;
+
+			// Reset for next average.
+			frameCnt = 0;
+			timeElapsed += 1.0f;
+			ENGINE_INFO("Fps >> {}", ToAString(fpsText));
+		}
+
+		return fpsText;
 	}
 
 	void Application::Init()

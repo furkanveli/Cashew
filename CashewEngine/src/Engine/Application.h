@@ -2,6 +2,7 @@
 #include "Macros.h"
 #include "Window.h"
 
+
 namespace Cashew
 {
 	class CASHEW_API Application
@@ -9,8 +10,13 @@ namespace Cashew
 	public:
 		Application();
 		virtual ~Application();
-		virtual void Init();
 		virtual int Run();
+		
+
+	private:
+		virtual void Init();
+		virtual void Render(const CashewTimer& timer);
+		std::wstring CalcFPS();
 	private:
 		Window m_window;
 		HWND m_consoleHandle;

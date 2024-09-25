@@ -7,6 +7,8 @@
 #include "Keyboard.h"
 #include "Log.h"
 #include "CashewError.h"
+#include "CashewTimer.h"
+
 
 namespace Cashew
 {
@@ -17,7 +19,7 @@ namespace Cashew
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
-		Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h);
+		Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h) noexcept;
 	private:
 		wchar_t* m_Name;
 		wchar_t* m_ClassName;
@@ -27,9 +29,11 @@ namespace Cashew
 		HWND m_hwnd;
 		WNDCLASSEX m_windowClass;
 
+
 	public:
 		Keyboard kbd;
 		Mouse mouse;
+		CashewTimer m_timer;
 	private:
 		wchar_t* GetName();
 		wchar_t* GetWindowClassName();
