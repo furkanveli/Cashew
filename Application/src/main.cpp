@@ -8,7 +8,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 	try
 	{
 		auto app = Cashew::CreateApplication();
-		app->Init();
 		int result = app->Run();
 		return result;
 	}

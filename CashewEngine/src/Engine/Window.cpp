@@ -3,6 +3,7 @@
 
 
 
+
 namespace Cashew
 {
 	HRESULT False()
@@ -17,9 +18,10 @@ namespace Cashew
 		DestroyWindow(m_hwnd);
 	}
 
-	Window::Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h)
+	Window::Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h) noexcept
 		:m_Name(name), m_ClassName(classname), m_width(w), m_height(h), m_hInst(GetModuleHandleW(nullptr))
 	{
+
 		// Register the window class
 		m_windowClass.cbSize = sizeof(m_windowClass);
 		m_windowClass.style = CS_OWNDC;
@@ -103,7 +105,7 @@ namespace Cashew
 
 	std::optional<int> Window::ProcessMessages()
 	{
-		MSG msg;
+		MSG msg = { 0 };
 
 		while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
@@ -111,17 +113,26 @@ namespace Cashew
 				return msg.wParam;
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
-			std::wstringstream os;
-			os << "Mouse X: " << mouse.GetPosX() << " " << "Mouse Y: " << mouse.GetPosY();
-			SetTitle(os.str());
 		}
 		return {};
+
+		
 	}
 
 	LRESULT Window::HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (msg)
 		{
+		case WM_ACTIVATE:
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				m_timer.Pause();
+			}
+			else
+			{
+				m_timer.Start();
+			}
+			break;
 		case WM_CLOSE:
 			PostQuitMessage(0);
 			return 0;
