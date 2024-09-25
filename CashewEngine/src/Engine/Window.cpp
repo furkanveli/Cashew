@@ -2,9 +2,13 @@
 #include "Log.h"
 
 
+
 namespace Cashew
 {
-
+	HRESULT False()
+	{
+		return E_NOINTERFACE;
+	}
 
 	Window::~Window()
 	{
@@ -38,7 +42,7 @@ namespace Cashew
 		wr.right = m_width + wr.left;
 		wr.top = 100;
 		wr.bottom = m_height + wr.top;
-		ThrowIfWin(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE));
+		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) >> chk;
 		
 		// Create window and get window handle
 		m_hwnd = CreateWindowW(m_ClassName, m_Name, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 850, 200,
@@ -111,7 +115,6 @@ namespace Cashew
 			os << "Mouse X: " << mouse.GetPosX() << " " << "Mouse Y: " << mouse.GetPosY();
 			SetTitle(os.str());
 		}
-
 		return {};
 	}
 

@@ -9,7 +9,7 @@ namespace Cashew
 
 
 	Application::Application()
-		:m_window(L"Cashew Application Window", L"CashewClass", 800, 600)
+		:m_window(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 800, 600)
 	{
 	}
 

@@ -3,6 +3,27 @@
 
 namespace Cashew
 {
+	CheckerToken chk;
+
+	void operator>>(HrGrabber grabber, CheckerToken chk)
+	{
+		if (FAILED(grabber.hr))
+		{
+			if (grabber.loc.function_name() == "")
+			{
+				throw CashewWindowError((int)grabber.loc.line(), ToWstring(grabber.loc.file_name()).c_str(), grabber.hr);
+			}
+			else
+			{
+				throw CashewWindowError((int)grabber.loc.line(), ToWstring(grabber.loc.file_name()).c_str(), grabber.hr, ToWstring(grabber.loc.function_name()).c_str());
+			}
+		}
+	}
+
+	HrGrabber::HrGrabber(unsigned int hr, std::source_location location) noexcept
+		:hr(hr), loc(location)
+	{}
+
 	CashewError::CashewError(int line, const wchar_t* file)
 		:m_line(line), m_file(file)
 	{}
@@ -52,6 +73,13 @@ namespace Cashew
 		m_hr = hr;
 	}
 
+	CashewWindowError::CashewWindowError(int line, const wchar_t* file, HRESULT hr, const wchar_t* function)
+		:CashewError(line, file)
+	{
+		m_hr = hr;
+		m_function = function;
+	}
+
 	HRESULT CashewWindowError::GetErrorCode()
 	{
 		return m_hr;
@@ -70,9 +98,10 @@ namespace Cashew
 
 		std::wstringstream oss;
 		oss << GetType() << std::endl
-			<< "[Error Code] " << GetErrorCode() << std::endl
-			<< "[Description] " << pMsgBuf << std::endl
-			<< "[File] " << m_file << std::endl << "[Line] " << m_line;
+			<< "[Error Code] " << "\n\n" << GetErrorCode() << "\n\n" 
+			<< "[Description] " << "\n\n" << pMsgBuf << "\n\n" 
+			<< "[File] " << m_file << "\n\n" << "[Line] " << m_line << "\n\n"
+			<< "[Function] " << "\n\n" << m_function;
 
 		LocalFree(pMsgBuf);
 		return oss.str();
@@ -83,5 +112,7 @@ namespace Cashew
 	{
 		return L"Window Error";
 	}
+
+	
 
 }

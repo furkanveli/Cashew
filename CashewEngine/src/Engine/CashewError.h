@@ -4,8 +4,20 @@
 #include <Windows.h>
 #include <string>
 #include <sstream>
+#include <source_location>
 namespace Cashew
 {
+	struct CheckerToken {};
+	extern CheckerToken chk;
+	struct HrGrabber
+	{
+		HrGrabber(unsigned int hr, std::source_location location = std::source_location::current()) noexcept;
+		unsigned int hr;
+		std::source_location loc;
+	};
+	void operator>>(HrGrabber grabber, CheckerToken chk);
+
+
 	class CASHEW_API CashewError
 	{
 	public:
@@ -30,6 +42,7 @@ namespace Cashew
 	{
 	public:
 		CashewWindowError(int line, const wchar_t* file, HRESULT hr);
+		CashewWindowError(int line, const wchar_t* file, HRESULT hr, const wchar_t* function);
 		HRESULT GetErrorCode();
 
 		// overrides
@@ -38,6 +51,7 @@ namespace Cashew
 
 	private:
 		HRESULT m_hr;
+		std::wstring m_function;
 	};
 
 
@@ -55,6 +69,7 @@ namespace Cashew
 
 #define ERR_STD() CashewError(__LINE__, ToWstring(__FILE__).c_str());
 #define ERR_WND( hr ) CashewWindowError(__LINE__, ToWstring(__FILE__).c_str(), hr);
+#define ERR_WNDF( hr, funcname ) CashewWindowError(__LINE__, ToWstring(__FILE__).c_str(), hr, funcname);
 
 #ifndef ThrowIfWin
 #define ThrowIfWin(x) \
