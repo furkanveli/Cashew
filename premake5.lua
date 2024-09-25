@@ -29,7 +29,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
         }
 
         filter "system:windows"
-            cppdialect "C++17"
+            cppdialect "C++20"
             staticruntime "On"
             systemversion "latest"
 
@@ -78,7 +78,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
         }
 
         filter "system:windows"
-            cppdialect "C++17"
+            cppdialect "C++20"
             staticruntime "On"
             systemversion "latest"
 

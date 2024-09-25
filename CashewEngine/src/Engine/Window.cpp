@@ -2,19 +2,23 @@
 #include "Log.h"
 
 
+
 namespace Cashew
 {
-
+	HRESULT False()
+	{
+		return E_NOINTERFACE;
+	}
 
 	Window::~Window()
 	{
 		// Unregister class and destroy window
-		UnregisterClass(m_ClassName, m_hInst);
+		UnregisterClassW(m_ClassName, m_hInst);
 		DestroyWindow(m_hwnd);
 	}
 
-	Window::Window(LPCWSTR name, LPCWSTR classname, unsigned int w, unsigned int h)
-		:m_Name(name), m_ClassName(classname), m_width(w), m_height(h), m_hInst(GetModuleHandle(nullptr))
+	Window::Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h)
+		:m_Name(name), m_ClassName(classname), m_width(w), m_height(h), m_hInst(GetModuleHandleW(nullptr))
 	{
 		// Register the window class
 		m_windowClass.cbSize = sizeof(m_windowClass);
@@ -38,22 +42,26 @@ namespace Cashew
 		wr.right = m_width + wr.left;
 		wr.top = 100;
 		wr.bottom = m_height + wr.top;
-		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
-
+		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) >> chk;
+		
 		// Create window and get window handle
 		m_hwnd = CreateWindowW(m_ClassName, m_Name, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 850, 200,
 			wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, m_hInst, this);
-
-		ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+		if (m_hwnd == nullptr)
+		{
+			DWORD errorCode = GetLastError(); 
+				throw ERR_WND(errorCode);
+		}
 		
+		ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 	}
 
-	LPCWSTR Window::GetName()
+	wchar_t* Window::GetName()
 	{
 		return m_Name;
 	}
 
-	LPCWSTR Window::GetWindowClassName()
+	wchar_t* Window::GetWindowClassName()
 	{
 		return m_ClassName;
 	}
@@ -78,8 +86,8 @@ namespace Cashew
 		{
 			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
 			Window* const WinWindowPtr = static_cast<Window*>(pCreate->lpCreateParams);
-			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(WinWindowPtr));
-			SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgTransfer));
+			SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(WinWindowPtr));
+			SetWindowLongPtrW(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgTransfer));
 			
 			return WinWindowPtr->HandleMsg(hwnd, msg, wParam, lParam);
 		}
@@ -89,7 +97,7 @@ namespace Cashew
 
 	LRESULT Window::HandleMsgTransfer(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
-		Window* const WinWindowPtr = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		Window* const WinWindowPtr = reinterpret_cast<Window*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
 		return WinWindowPtr->HandleMsg(hwnd, msg, wParam, lParam);
 	}
 
@@ -97,18 +105,16 @@ namespace Cashew
 	{
 		MSG msg;
 
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
 				return msg.wParam;
 			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			std::stringstream os;
+			DispatchMessageW(&msg);
+			std::wstringstream os;
 			os << "Mouse X: " << mouse.GetPosX() << " " << "Mouse Y: " << mouse.GetPosY();
 			SetTitle(os.str());
-
 		}
-
 		return {};
 	}
 
@@ -218,12 +224,12 @@ namespace Cashew
 		/************** END MOUSE MESSAGES **************/
 		}
 
-		return DefWindowProc(hwnd, msg, wParam, lParam);
+		return DefWindowProcW(hwnd, msg, wParam, lParam);
 	}
 	
-	void Window::SetTitle(const std::string& title)
+	void Window::SetTitle(const std::wstring& title)
 	{
-		SetWindowTextA(m_hwnd, title.c_str());
+		ThrowIfWin(SetWindowTextW(m_hwnd, title.c_str()));
 	}
 
 }

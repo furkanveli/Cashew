@@ -1,12 +1,30 @@
 #include <CashewEngine.h>
 
+
+
 #ifdef CASHEW_PLATFORM_WINDOWS
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow)
 {
-	auto app = Cashew::CreateApplication();
-	app->Init();
-	int result = app->Run();
-	return result;
+	try
+	{
+		auto app = Cashew::CreateApplication();
+		app->Init();
+		int result = app->Run();
+		return result;
+	}
+	catch (Cashew::CashewError& e)
+	{
+		MessageBoxW(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+	}
+	catch (std::exception& e)
+	{
+		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+	}
+	catch (...)
+	{
+		MessageBoxW(nullptr, L"Unspecified Error, No details available", L"Unknown exception", MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+	}
+	return -1;
 }
 #else
 int main(int argc, char** argv)

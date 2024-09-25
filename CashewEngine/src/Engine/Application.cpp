@@ -3,12 +3,13 @@
 #include <sstream>
 #include "Window.h"
 #include "Log.h"
+#include "CashewError.h"
 namespace Cashew
 {
 
 
 	Application::Application()
-		:m_window(L"Cashew Application Window", L"CashewClass", 800, 600)
+		:m_window(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 800, 600)
 	{
 	}
 
@@ -51,7 +52,7 @@ namespace Cashew
 		freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
 
 		// Set the console window title
-		SetConsoleTitle(L"Cashew Console");
+		SetConsoleTitleW(L"Cashew Console");
 
 		// Move the console window to a convenient position
 		

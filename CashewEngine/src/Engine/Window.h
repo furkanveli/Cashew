@@ -6,6 +6,7 @@
 #include "Mouse.h"
 #include "Keyboard.h"
 #include "Log.h"
+#include "CashewError.h"
 
 namespace Cashew
 {
@@ -16,10 +17,10 @@ namespace Cashew
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
-		Window(LPCWSTR name, LPCWSTR classname, unsigned int w, unsigned int h);
+		Window(wchar_t* name, wchar_t* classname, unsigned int w, unsigned int h);
 	private:
-		LPCWSTR m_Name;
-		LPCWSTR m_ClassName;
+		wchar_t* m_Name;
+		wchar_t* m_ClassName;
 		unsigned int m_width;
 		unsigned int m_height;
 		HINSTANCE m_hInst;
@@ -30,8 +31,8 @@ namespace Cashew
 		Keyboard kbd;
 		Mouse mouse;
 	private:
-		LPCWSTR GetName();
-		LPCWSTR GetWindowClassName();
+		wchar_t* GetName();
+		wchar_t* GetWindowClassName();
 		unsigned int GetWidth();
 		unsigned int GetHeight();
 
@@ -41,7 +42,7 @@ namespace Cashew
 
 	public:
 		std::optional<int> ProcessMessages();
-		void SetTitle(const std::string& title);
+		void SetTitle(const std::wstring& title);
 	};
 
 

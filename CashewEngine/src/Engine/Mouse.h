@@ -4,7 +4,7 @@
 
 namespace Cashew
 {
-	CASHEW_API class Mouse
+	class CASHEW_API Mouse
 	{
 		friend class Window;
 	public:
@@ -31,7 +31,7 @@ namespace Cashew
 			int m_x;
 			int m_y;
 		public:
-			Event() noexcept
+			Event() 
 				:
 				m_type(Type::Invalid),
 				m_leftIsPressed(false),
@@ -39,7 +39,7 @@ namespace Cashew
 				m_x(0),
 				m_y(0)
 			{}
-			Event(Type type, const Mouse& parent) noexcept
+			Event(Type type, const Mouse& parent) 
 				:
 				m_type(type),
 				m_leftIsPressed(parent.m_leftIsPressed),
@@ -47,31 +47,31 @@ namespace Cashew
 				m_x(parent.m_x),
 				m_y(parent.m_y)
 			{}
-			bool IsValid() const noexcept
+			bool IsValid() const 
 			{
 				return m_type != Type::Invalid;
 			}
-			Type GetType() const noexcept
+			Type GetType() const 
 			{
 				return m_type;
 			}
-			std::pair<int, int> GetPos() const noexcept
+			std::pair<int, int> GetPos() const 
 			{
 				return{ m_x,m_y };
 			}
-			int GetPosX() const noexcept
+			int GetPosX() const 
 			{
 				return m_x;
 			}
-			int GetPosY() const noexcept
+			int GetPosY() const 
 			{
 				return m_y;
 			}
-			bool LeftIsPressed() const noexcept
+			bool LeftIsPressed() const 
 			{
 				return m_leftIsPressed;
 			}
-			bool RightIsPressed() const noexcept
+			bool RightIsPressed() const 
 			{
 				return m_rightIsPressed;
 			}
@@ -80,30 +80,30 @@ namespace Cashew
 		Mouse() = default;
 		Mouse(const Mouse&) = delete;
 		Mouse& operator=(const Mouse&) = delete;
-		std::pair<int, int> GetPos() const noexcept;
-		int GetPosX() const noexcept;
-		int GetPosY() const noexcept;
-		bool IsInWindow() const noexcept;
-		bool LeftIsPressed() const noexcept;
-		bool RightIsPressed() const noexcept;
-		Mouse::Event Read() noexcept;
-		bool IsEmpty() const noexcept
+		std::pair<int, int> GetPos() const ;
+		int GetPosX() const ;
+		int GetPosY() const ;
+		bool IsInWindow() const ;
+		bool LeftIsPressed() const ;
+		bool RightIsPressed() const ;
+		Mouse::Event Read() ;
+		bool IsEmpty() const 
 		{
 			return m_buffer.empty();
 		}
-		void Flush() noexcept;
+		void Flush() ;
 	private:
-		void OnMouseMove(int x, int y) noexcept;
-		void OnMouseLeave() noexcept;
-		void OnMouseEnter() noexcept;
-		void OnLeftPressed(int x, int y) noexcept;
-		void OnLeftReleased(int x, int y) noexcept;
-		void OnRightPressed(int x, int y) noexcept;
-		void OnRightReleased(int x, int y) noexcept;
-		void OnWheelUp(int x, int y) noexcept;
-		void OnWheelDown(int x, int y) noexcept;
-		void TrimBuffer() noexcept;
-		void OnWheelDelta(int x, int y, int delta) noexcept;
+		void OnMouseMove(int x, int y) ;
+		void OnMouseLeave() ;
+		void OnMouseEnter() ;
+		void OnLeftPressed(int x, int y) ;
+		void OnLeftReleased(int x, int y) ;
+		void OnRightPressed(int x, int y) ;
+		void OnRightReleased(int x, int y) ;
+		void OnWheelUp(int x, int y) ;
+		void OnWheelDown(int x, int y) ;
+		void TrimBuffer() ;
+		void OnWheelDelta(int x, int y, int delta) ;
 	private:
 		static constexpr unsigned int m_bufferSize = 16u;
 		int m_x;
