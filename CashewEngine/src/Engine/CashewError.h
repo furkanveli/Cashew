@@ -5,13 +5,25 @@
 #include <string>
 #include <sstream>
 #include <source_location>
+#include <d3d12.h>
+#include "d3dx12.h"
+#include <dxgi1_6.h>
+#include <d3dcompiler.h>
+#include "d3d12sdklayers.h"
+#include <wrl.h>
 namespace Cashew
 {
+#ifdef CASHEW_DEBUG
+	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> InfoQueue;
+	void QueueInit(ID3D12Device* device);
+#endif
+
+
 	struct CheckerToken {};
 	extern CheckerToken chk;
 	struct HrGrabber
 	{
-		HrGrabber(unsigned int hr, std::source_location location = std::source_location::current()) noexcept;
+		HrGrabber(unsigned int hr, std::source_location location = std::source_location::current())  noexcept;
 		unsigned int hr;
 		std::source_location loc;
 	};
@@ -49,11 +61,20 @@ namespace Cashew
 		std::wstring GetErrorString() override;
 		const wchar_t* GetType() override;
 
-	private:
+	protected:
 		HRESULT m_hr;
 		std::wstring m_function;
 	};
 
+	class CASHEW_API CashewD3DError : public CashewWindowError
+	{
+	public:
+		CashewD3DError(int line, const wchar_t* file, HRESULT hr, const wchar_t* function);
+
+		std::wstring GetErrorString() override;
+		const wchar_t* GetType() override;
+		
+	};
 
 	inline std::wstring ToWstring(const std::string& str)
 	{

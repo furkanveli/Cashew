@@ -19,6 +19,7 @@ namespace Cashew
 	private:
 		static std::shared_ptr<spdlog::logger> s_EngineLogger;
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;
+		static std::once_flag initFlag; // Ensure initialization only happens once
 	};
 
 }// namespace end

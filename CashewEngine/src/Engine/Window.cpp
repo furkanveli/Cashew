@@ -78,6 +78,11 @@ namespace Cashew
 		return m_height;
 	}
 
+	HWND Window::GetHwnd()
+	{
+		return m_hwnd;
+	}
+
 
 	LRESULT Window::HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{

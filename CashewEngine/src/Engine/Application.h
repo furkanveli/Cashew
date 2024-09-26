@@ -1,7 +1,7 @@
 #pragma once
 #include "Macros.h"
 #include "Window.h"
-
+#include "D3DGraphics.h"
 
 namespace Cashew
 {
@@ -20,6 +20,7 @@ namespace Cashew
 	private:
 		Window m_window;
 		HWND m_consoleHandle;
+		D3DGraphics m_gfx;
 	};
 
 	// this is going to be defined in client

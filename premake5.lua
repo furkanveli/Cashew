@@ -28,6 +28,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
             "%{prj.name}/TPD/spdlog/include"
         }
 
+        links
+        {
+            "d3d12", "dxgi", "d3dcompiler"
+        }
+
         filter "system:windows"
             cppdialect "C++20"
             staticruntime "On"
