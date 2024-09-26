@@ -10,8 +10,9 @@ namespace Cashew
 
 
 	Application::Application()
-		:m_window(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 800, 600)
+		:m_window(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 800, 600), m_gfx(m_window.GetHwnd(), m_window.GetWidth(), m_window.GetHeight())
 	{
+		m_gfx.Init();
 	}
 
 	Application::~Application()
@@ -66,7 +67,6 @@ namespace Cashew
 			// Reset for next average.
 			frameCnt = 0;
 			timeElapsed += 1.0f;
-			ENGINE_INFO("Fps >> {}", ToAString(fpsText));
 		}
 
 		return fpsText;
@@ -76,7 +76,6 @@ namespace Cashew
 	{
 #ifdef CASHEW_DEBUG
 		Cashew::CreateConsole();
-
 		Cashew::Log::Init();
 		ENGINE_TRACE("Initialized Log from the Engine ");
 		CLIENT_TRACE("Initialized Log from the Client");

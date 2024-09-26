@@ -34,12 +34,14 @@ namespace Cashew
 		Keyboard kbd;
 		Mouse mouse;
 		CashewTimer m_timer;
-	private:
+	public:
 		wchar_t* GetName();
 		wchar_t* GetWindowClassName();
 		unsigned int GetWidth();
 		unsigned int GetHeight();
+		HWND GetHwnd();
 
+	private:
 		static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		static LRESULT CALLBACK HandleMsgTransfer(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 		LRESULT HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
