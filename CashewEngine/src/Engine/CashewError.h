@@ -15,7 +15,7 @@
 namespace Cashew
 {
 #ifdef CASHEW_DEBUG
-	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> ID3D12InfoQueue;
+	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> D3D12InfoQueue;
 	extern Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue;
 	void QueueInit(ID3D12Device* device);
 #endif

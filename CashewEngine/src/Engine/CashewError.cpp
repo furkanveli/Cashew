@@ -3,11 +3,11 @@
 
 namespace Cashew
 {
-	Microsoft::WRL::ComPtr<ID3D12InfoQueue1> ID3D12InfoQueue; // has to be created for dxgiinfoqueue to catch d3d12 errors
+	Microsoft::WRL::ComPtr<ID3D12InfoQueue1> D3D12InfoQueue; // has to be created for dxgiinfoqueue to catch d3d12 errors
 	Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue = nullptr;
 	void QueueInit(ID3D12Device* device)
 	{
-		device->QueryInterface(IID_PPV_ARGS(&ID3D12InfoQueue));
+		device->QueryInterface(IID_PPV_ARGS(&D3D12InfoQueue));
 
 		// load the dll and get the address of the DXGIGetDebugInterface to call it for initializing DXGIInfoQueue
 		typedef HRESULT(WINAPI* GetDXGIInterface)(REFIID, void**);
@@ -30,12 +30,11 @@ namespace Cashew
 		// messages available for vs console.
 
 		DXGI_INFO_QUEUE_FILTER filter = {};
-
 		DXGI_INFO_QUEUE_MESSAGE_SEVERITY allowedseverities[] = { DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION };
 		filter.AllowList.NumSeverities = _countof(allowedseverities);
 		filter.AllowList.pSeverityList = allowedseverities;
+	
 		DXGIInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
-
 	}
 
 	CheckerToken chk;
@@ -82,7 +81,7 @@ namespace Cashew
 
 	const wchar_t* CashewError::GetType() 
 	{
-		return L"Standard Error";
+		return L"Standard Cashew Error";
 	}
 
 	std::wstring CashewError::GetErrorString()
@@ -160,11 +159,12 @@ namespace Cashew
 		if (d3dMessageCount > 0)
 		{
 			SIZE_T messageLength = 0;
-			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount - 1, nullptr, &messageLength);
+			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount -1, nullptr, &messageLength);
 			std::vector<char> messageBuffer(messageLength);
 			DXGI_INFO_QUEUE_MESSAGE* pMessage = reinterpret_cast<DXGI_INFO_QUEUE_MESSAGE*>(messageBuffer.data());
-			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount - 1, pMessage, &messageLength);
+			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount -1, pMessage, &messageLength);
 			DetailedDesc = ToWstring(pMessage->pDescription);
+			
 		}
 		
 
