@@ -51,8 +51,7 @@ namespace Cashew
 			wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, m_hInst, this);
 		if (m_hwnd == nullptr)
 		{
-			DWORD errorCode = GetLastError(); 
-				throw ERR_WND(errorCode);
+			throw ERR_LAST();
 		}
 		
 		ShowWindow(m_hwnd, SW_SHOWDEFAULT);

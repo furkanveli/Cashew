@@ -30,7 +30,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
         links
         {
-            "d3d12", "dxgi", "d3dcompiler"
+            "d3d12", "dxgi", "d3dcompiler", "dxguid"
         }
 
         filter "system:windows"
