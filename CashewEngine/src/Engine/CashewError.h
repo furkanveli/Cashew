@@ -12,9 +12,46 @@
 #include "d3d12sdklayers.h"
 #include "dxgidebug.h"
 #include <wrl.h>
+#include "Log.h"
 namespace Cashew
 {
 #ifdef CASHEW_DEBUG
+	inline void ErrorCallback(D3D12_MESSAGE_CATEGORY Category, D3D12_MESSAGE_SEVERITY Severity, D3D12_MESSAGE_ID ID, LPCSTR pDescription, void* pContext)
+	{
+		static int flag = 0;
+		flag++;
+		if (flag > 300)
+		{
+			switch (Severity)
+			{
+			case D3D12_MESSAGE_SEVERITY_CORRUPTION:
+				ENGINE_CRITICAL("{}, Severity= {}", pDescription, "CORRUPTION");
+				flag = 0;
+				break;
+			case D3D12_MESSAGE_SEVERITY_ERROR:
+				ENGINE_ERROR("{}, Severity= {}", pDescription, "ERROR");
+				flag = 0;
+				break;
+			case D3D12_MESSAGE_SEVERITY_WARNING:
+				ENGINE_WARN("{}, Severity= {}", pDescription, "WARNING");
+				flag = 0;
+				break;
+			case D3D12_MESSAGE_SEVERITY_INFO:
+				ENGINE_INFO("{}, Severity= {}", pDescription, "INFO");
+				flag = 0;
+				break;
+			case D3D12_MESSAGE_SEVERITY_MESSAGE:
+				ENGINE_DEBUG("{}, Severity= {}", pDescription, "MESSAGE");
+				flag = 0;
+				break;
+			default:
+				flag = 0;
+				break;
+			}
+				
+		}
+	}
+
 	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> D3D12InfoQueue;
 	extern Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue;
 	void QueueInit(ID3D12Device* device);

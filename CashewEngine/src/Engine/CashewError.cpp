@@ -7,8 +7,7 @@ namespace Cashew
 	Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue = nullptr;
 	void QueueInit(ID3D12Device* device)
 	{
-		device->QueryInterface(IID_PPV_ARGS(&D3D12InfoQueue));
-
+		
 		// load the dll and get the address of the DXGIGetDebugInterface to call it for initializing DXGIInfoQueue
 		typedef HRESULT(WINAPI* GetDXGIInterface)(REFIID, void**);
 
@@ -35,6 +34,11 @@ namespace Cashew
 		filter.AllowList.pSeverityList = allowedseverities;
 	
 		DXGIInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
+
+		device->QueryInterface(IID_PPV_ARGS(&D3D12InfoQueue));
+		D3D12InfoQueue->ClearStoredMessages();
+		DWORD a = 5;
+		D3D12InfoQueue->RegisterMessageCallback(ErrorCallback, D3D12_MESSAGE_CALLBACK_IGNORE_FILTERS, nullptr, &a) >> chk;
 	}
 
 	CheckerToken chk;
