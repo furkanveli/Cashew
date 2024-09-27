@@ -10,11 +10,13 @@
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include "d3d12sdklayers.h"
+#include "dxgidebug.h"
 #include <wrl.h>
 namespace Cashew
 {
 #ifdef CASHEW_DEBUG
-	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> InfoQueue;
+	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> ID3D12InfoQueue;
+	extern Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue;
 	void QueueInit(ID3D12Device* device);
 #endif
 
@@ -101,6 +103,7 @@ namespace Cashew
 #define ERR_STD() CashewError(__LINE__, ToWstring(__FILE__).c_str());
 #define ERR_WND( hr ) CashewWindowError(__LINE__, ToWstring(__FILE__).c_str(), hr);
 #define ERR_WNDF( hr, funcname ) CashewWindowError(__LINE__, ToWstring(__FILE__).c_str(), hr, funcname);
+#define ERR_LAST() ERR_WND(GetLastError());
 
 #ifndef ThrowIfWin
 #define ThrowIfWin(x) \

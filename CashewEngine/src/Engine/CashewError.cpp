@@ -1,35 +1,41 @@
 #include "CashewError.h"
-#include <comdef.h>
 #include <vector>
 
 namespace Cashew
 {
-	Microsoft::WRL::ComPtr<ID3D12InfoQueue1> InfoQueue = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12InfoQueue1> ID3D12InfoQueue; // has to be created for dxgiinfoqueue to catch d3d12 errors
+	Microsoft::WRL::ComPtr<IDXGIInfoQueue> DXGIInfoQueue = nullptr;
 	void QueueInit(ID3D12Device* device)
 	{
-		device->QueryInterface(IID_PPV_ARGS(&InfoQueue));
-		D3D12_INFO_QUEUE_FILTER filter = {};
+		device->QueryInterface(IID_PPV_ARGS(&ID3D12InfoQueue));
 
-		D3D12_MESSAGE_SEVERITY allowedseverities[] = { D3D12_MESSAGE_SEVERITY_ERROR, D3D12_MESSAGE_SEVERITY_CORRUPTION };
-		D3D12_MESSAGE_SEVERITY deniedseverities[] = {  D3D12_MESSAGE_SEVERITY_INFO};
+		// load the dll and get the address of the DXGIGetDebugInterface to call it for initializing DXGIInfoQueue
+		typedef HRESULT(WINAPI* GetDXGIInterface)(REFIID, void**);
 
-		D3D12_MESSAGE_ID deniedIDs[] = {
-		D3D12_MESSAGE_ID::D3D12_MESSAGE_ID_CREATEDEVICE_DEBUG_LAYER_STARTUP_OPTIONS
-		};
+		auto dxgidebugdll = LoadLibraryExW(L"dxgidebug.dll", nullptr, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR);
+		if (dxgidebugdll == nullptr)
+		{
+			throw ERR_LAST();
+		}
+		auto GetInterface = reinterpret_cast<GetDXGIInterface>(reinterpret_cast<void*>(GetProcAddress(dxgidebugdll, "DXGIGetDebugInterface")));
+		if (GetInterface == nullptr)
+		{
+			throw ERR_LAST();
+		}
 
-		// Set the filter to include only errors
+		GetInterface(IID_PPV_ARGS(&DXGIInfoQueue)) >> chk;
+
+		// filtering messages removes useful warning messages from visual studio window too. Might wanna change CashewD3DError.GetErrorString() implementation if necessary.
+		// would probably require looping through all the messages in the queue until one with corruption or error severity is found and that would be logged, leaving the warning
+		// messages available for vs console.
+
+		DXGI_INFO_QUEUE_FILTER filter = {};
+
+		DXGI_INFO_QUEUE_MESSAGE_SEVERITY allowedseverities[] = { DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION };
 		filter.AllowList.NumSeverities = _countof(allowedseverities);
 		filter.AllowList.pSeverityList = allowedseverities;
+		DXGIInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
 
-		filter.DenyList.NumSeverities = _countof(deniedseverities);
-		filter.DenyList.pSeverityList = deniedseverities;
-
-		filter.DenyList.NumIDs = _countof(deniedIDs);
-		filter.DenyList.pIDList = deniedIDs;
-
-		// Apply the filter
-		InfoQueue->AddStorageFilterEntries(&filter);
-		
 	}
 
 	CheckerToken chk;
@@ -38,7 +44,7 @@ namespace Cashew
 	{
 		if (FAILED(grabber.hr))
 		{
-			if (InfoQueue->GetNumStoredMessages() > 0)
+			if ( DXGIInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL) > 0)
 			{
 				throw CashewD3DError((int)grabber.loc.line(), ToWstring(grabber.loc.file_name()).c_str(), grabber.hr, ToWstring(grabber.loc.function_name()).c_str());
 			}
@@ -149,17 +155,18 @@ namespace Cashew
 		{
 			return L"Unidentified error code";
 		}
-		UINT64 messageCount = InfoQueue->GetNumStoredMessages();
-		std::wstring DetailedDesc;
-		if (messageCount > 0)
+		UINT64 d3dMessageCount = DXGIInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
+		std::wstring DetailedDesc = L"No detailed description available!";
+		if (d3dMessageCount > 0)
 		{
 			SIZE_T messageLength = 0;
-			InfoQueue->GetMessageW(messageCount - 1, nullptr, &messageLength);
+			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount - 1, nullptr, &messageLength);
 			std::vector<char> messageBuffer(messageLength);
-			D3D12_MESSAGE* pMessage = reinterpret_cast<D3D12_MESSAGE*>(messageBuffer.data());
-			InfoQueue->GetMessageW(messageCount - 1, pMessage, &messageLength);
+			DXGI_INFO_QUEUE_MESSAGE* pMessage = reinterpret_cast<DXGI_INFO_QUEUE_MESSAGE*>(messageBuffer.data());
+			DXGIInfoQueue->GetMessageW(DXGI_DEBUG_ALL, d3dMessageCount - 1, pMessage, &messageLength);
 			DetailedDesc = ToWstring(pMessage->pDescription);
 		}
+		
 
 		std::wstringstream oss;
 

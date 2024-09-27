@@ -24,7 +24,7 @@ namespace Cashew
 #ifdef CASHEW_DEBUG
 		// info queue for console debug messages
 		QueueInit(m_device.Get());
-		InfoQueue->ClearStoredMessages();
+		// D3D12InfoQueue->ClearStoredMessages();
 #endif
 
 		const D3D12_COMMAND_QUEUE_DESC desc =
@@ -56,6 +56,7 @@ namespace Cashew
 			.Flags = 0
 		};
 		m_dxgiFactory->CreateSwapChainForHwnd(m_commandQueue.Get(), m_hwnd, &swapChainDesc, nullptr, nullptr, &m_swapChain) >> chk;
+
 		
 		return true;
 	}
