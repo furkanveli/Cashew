@@ -16,7 +16,7 @@ namespace Cashew
 
 	private:
 		virtual void Init();
-		virtual void Render(const CashewTimer& timer);
+		virtual void DoFrame(const CashewTimer& timer);
 		std::wstring CalcFPS();
 	private:
 		std::optional<Window> m_window; // using std::optional so that construction can be delayed to after the init call. This way we call logger from the window constructor safely

@@ -37,25 +37,21 @@ namespace Cashew
 				return *exitCode;
 			}
 			
-			Render(m_window->m_timer);
+			DoFrame(m_window->m_timer);
 		}
 		return 0;
 	}
 
-	void Application::Render(const CashewTimer& timer)
+	void Application::DoFrame(const CashewTimer& timer)
 	{
 		m_window->m_timer.Tick();
 		CalcFPS();
-
-		std::wstringstream os;
-		os << "Mouse X: " << m_window->mouse.GetPosX() << " " << "Mouse Y: " << m_window->mouse.GetPosY();
-		m_window->SetTitle(os.str());
+		m_gfx->Render(m_window->m_timer);
 
 	}
 
 	std::wstring Application::CalcFPS()
 	{
-
 		static int frameCnt = 0;
 		static float timeElapsed = 0.0f;
 		std::wstring fpsText;
@@ -72,9 +68,11 @@ namespace Cashew
 
 			// Reset for next average.
 			frameCnt = 0;
-			timeElapsed += 1.0f;
+			timeElapsed += 1.0f;		
+			m_window->SetTitle(L"Cashew Window " + fpsText);
+	
 		}
-
+		
 		return fpsText;
 	}
 
