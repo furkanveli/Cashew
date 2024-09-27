@@ -53,7 +53,6 @@ namespace Cashew
 		{
 			throw ERR_LAST();
 		}
-		
 		ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 	}
 

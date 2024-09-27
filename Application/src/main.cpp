@@ -8,22 +8,60 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
 	try
 	{
 		auto app = Cashew::CreateApplication();
+		CLIENT_TRACE("Initialized Log from the client");
 		int result = app->Run();
 		return result;
 	}
 	catch (Cashew::CashewError& e)
 	{
-		MessageBoxW(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+		CLIENT_TRACE("{}", Cashew::ToAString(e.what()));
+		MessageBoxW(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION );
+		while (true) 
+		{
+			// Exit the loop if the console is closed
+			if (GetConsoleWindow() == NULL) {
+				break;
+			}
+
+			// Add a delay to avoid high CPU usage
+			Sleep(100);
+		}
+		return EXIT_FAILURE;
 	}
 	catch (std::exception& e)
 	{
-		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+		CLIENT_TRACE("{}", e.what());
+		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION );
+		while (true)
+		{
+			// Exit the loop if the console is closed
+			if (GetConsoleWindow() == NULL) {
+				break;
+			}
+
+			// Add a delay to avoid high CPU usage
+			Sleep(100);
+		}
+		return EXIT_FAILURE;
 	}
 	catch (...)
 	{
-		MessageBoxW(nullptr, L"Unspecified Error, No details available", L"Unknown exception", MB_OK | MB_ICONEXCLAMATION | MB_SETFOREGROUND);
+		CLIENT_TRACE("Unspecified Error, No details available, Unknown exception");
+		MessageBoxW(nullptr, L"Unspecified Error, No details available", L"Unknown exception", MB_OK | MB_ICONEXCLAMATION );
+		while (true)
+		{
+			// Exit the loop if the console is closed
+			if (GetConsoleWindow() == NULL) {
+				break;
+			}
+
+			// Add a delay to avoid high CPU usage
+			Sleep(100);
+		}
+		return EXIT_FAILURE;
 	}
-	return -1;
+	
+	return EXIT_FAILURE;
 }
 #else
 int main(int argc, char** argv)

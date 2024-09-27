@@ -13,13 +13,26 @@ namespace Cashew
 	public:
 		static void Init();
 
-		inline static std::shared_ptr<spdlog::logger>& GetEngineLogger() { return s_EngineLogger; }
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+		inline static std::shared_ptr<spdlog::logger>& GetEngineLogger() 
+		{
+			if (!s_EngineLogger) 
+			{
+				throw std::runtime_error("Engine logger not initialized. Call Log::Init() first.");
+			}
+			return s_EngineLogger; 
+		}
+		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() 
+		{
+			if (!s_ClientLogger) 
+			{
+				throw std::runtime_error("Engine logger not initialized. Call Log::Init() first.");
+			}
+			return s_ClientLogger; 
+		}
 
 	private:
 		static std::shared_ptr<spdlog::logger> s_EngineLogger;
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;
-		static std::once_flag initFlag; // Ensure initialization only happens once
 	};
 
 }// namespace end

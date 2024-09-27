@@ -1,6 +1,7 @@
 #pragma once
 #include "Macros.h"
 #include "Window.h"
+#include <optional>
 #include "D3DGraphics.h"
 
 namespace Cashew
@@ -18,9 +19,9 @@ namespace Cashew
 		virtual void Render(const CashewTimer& timer);
 		std::wstring CalcFPS();
 	private:
-		Window m_window;
+		std::optional<Window> m_window; // using std::optional so that construction can be delayed to after the init call. This way we call logger from the window constructor safely
 		HWND m_consoleHandle;
-		D3DGraphics m_gfx;
+		std::optional <D3DGraphics> m_gfx;
 	};
 
 	// this is going to be defined in client
