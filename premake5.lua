@@ -20,7 +20,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
         files
         {
             "%{prj.name}/src/*.h",
-            "%{prj.name}/src/**.cpp"
+            "%{prj.name}/src/**.cpp",
         }
 
         includedirs
@@ -43,18 +43,27 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
                 "CASHEW_PLATFORM_WINDOWS",
                 "CASHEW_BUILD_DLL"
             }
+            
+            prebuildcommands
+            {
+                 "call \"%{prj.location}/../compile_shaders.bat\""
+            }
+                        
 
             postbuildcommands
             {
                 ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Application")
             }
-        
+
+
         filter "configurations:Debug"
             defines "CASHEW_DEBUG"
             symbols "On"
         
         filter "configurations:Release"
             optimize "On"
+
+        
 
     
     project "Application"
