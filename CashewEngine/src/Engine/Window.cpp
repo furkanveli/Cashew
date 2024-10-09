@@ -1,15 +1,11 @@
 #include "Window.h"
 #include "Log.h"
-
+#include "Application.h"
 
 
 
 namespace Cashew
 {
-	HRESULT False()
-	{
-		return E_NOINTERFACE;
-	}
 
 	Window::~Window()
 	{
@@ -40,19 +36,23 @@ namespace Cashew
 
 		// calculate window size based on desired client region size
 		RECT wr;
-		wr.left = 100;
+		wr.left = 0;
 		wr.right = m_width + wr.left;
-		wr.top = 100;
+		wr.top = 0;
 		wr.bottom = m_height + wr.top;
-		AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) >> chk;
+		AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE) >> chk;
 		
 		// Create window and get window handle
-		m_hwnd = CreateWindowW(m_ClassName, m_Name, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, 850, 200,
+		m_hwnd = CreateWindowW(m_ClassName, m_Name, WS_OVERLAPPEDWINDOW, 850, 200,
 			wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, m_hInst, this);
 		if (m_hwnd == nullptr)
 		{
 			throw ERR_LAST();
 		}
+		RECT clientRect;
+		GetClientRect(m_hwnd, &clientRect);
+		m_width = clientRect.right - clientRect.left;
+		m_height = clientRect.bottom - clientRect.top;
 		ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 	}
 
@@ -129,12 +129,87 @@ namespace Cashew
 		case WM_ACTIVATE:
 			if (LOWORD(wParam) == WA_INACTIVE)
 			{
+				Application::m_appPaused = true;
 				m_timer.Pause();
 			}
 			else
 			{
+				Application::m_appPaused = false;
 				m_timer.Start();
 			}
+			break;
+		case WM_SIZE:
+		{
+			D3DGraphics* gfx = Application::GetGfx();
+			m_width = LOWORD(lParam);
+			m_height = HIWORD(lParam);
+			if (gfx)
+			{
+				gfx->SetWidth(LOWORD(lParam));
+				gfx->SetHeight(HIWORD(lParam));
+				if (gfx->DeviceExists())
+				{
+					if (wParam == SIZE_MINIMIZED)
+					{
+						Application::m_appPaused = true;
+						Application::m_minimized = true;
+						Application::m_maximized = false;
+					}
+					else if (wParam == SIZE_MAXIMIZED)
+					{
+						Application::m_appPaused = false;
+						Application::m_minimized = false;
+						Application::m_maximized = true;
+						gfx->OnResize();
+					}
+					else if (wParam == SIZE_RESTORED)
+					{
+						if (Application::m_minimized)
+						{
+							Application::m_appPaused = false;
+							Application::m_minimized = false;
+							gfx->OnResize();
+						}
+						else if (Application::m_maximized)
+						{
+							Application::m_appPaused = false;
+							Application::m_maximized = false;
+							gfx->OnResize();
+						}
+						else if (Application::m_resizing)
+						{
+							// do nothing until resize bars are let go.
+						}
+						else
+						{
+							gfx->OnResize();
+						}
+					}
+				}
+			}
+			break;
+		}
+		case WM_ENTERSIZEMOVE:
+			Application::m_appPaused = true;
+			Application::m_resizing = true;
+			m_timer.Pause();
+			break;
+
+		case WM_EXITSIZEMOVE:
+			Application::m_appPaused = false;
+			Application::m_resizing = false;
+			m_timer.Start();
+			Application::GetGfx()->OnResize();
+			break;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		case WM_MENUCHAR:
+			// Don't beep when we alt-enter.
+			return MAKELRESULT(0, MNC_CLOSE);
+		case WM_GETMINMAXINFO:
+			((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
+			((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 			break;
 		case WM_CLOSE:
 			PostQuitMessage(0);
@@ -156,6 +231,11 @@ namespace Cashew
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+			if (wParam == VK_ESCAPE)
+			{
+				PostQuitMessage(0);
+				return 0;
+			}
 			break;
 		case WM_CHAR:
 			kbd.OnChar(static_cast<unsigned char>(wParam));

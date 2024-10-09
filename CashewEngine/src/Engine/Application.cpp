@@ -7,18 +7,29 @@
 
 namespace Cashew
 {
+	std::optional<D3DGraphics> Application::m_gfx = std::nullopt;
+	bool Application::m_appPaused = false;
+	bool Application::m_minimized = false;
+	bool Application::m_maximized = false;
+	bool Application::m_resizing  = false;
 
+	D3DGraphics* Application::GetGfx()
+	{
+		return m_gfx.has_value() ? &m_gfx.value() : nullptr;
+	}
+
+	void Application::InitializeGraphics(HWND hwnd, int width, int height)
+	{
+		m_gfx.emplace(hwnd, width, height);
+	}
 
 	Application::Application()
 	{
 		Init(); // Call Init() to perform necessary setup
 
 		// Now construct the window and graphics objects after Init
-		m_window.emplace(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 800, 600);
-		m_gfx.emplace(m_window->GetHwnd(), m_window->GetWidth(), m_window->GetHeight());
-
-		// Initialize graphics after both are constructed
-		m_gfx->Init();
+		m_window.emplace(std::wstring(L"Cashew Application Window").data(), std::wstring(L"Cashew Class").data(), 600, 600);
+		Application::InitializeGraphics(m_window->GetHwnd(), m_window->GetWidth(), m_window->GetHeight());
 	}
 
 	Application::~Application()
@@ -46,7 +57,7 @@ namespace Cashew
 	{
 		m_window->m_timer.Tick();
 		CalcFPS();
-		m_gfx->Render(m_window->m_timer);
+		m_gfx->Render(m_window->m_timer, m_window->mouse.GetPosX(), m_window->mouse.GetPosY());
 
 	}
 
@@ -69,12 +80,16 @@ namespace Cashew
 			// Reset for next average.
 			frameCnt = 0;
 			timeElapsed += 1.0f;		
-			m_window->SetTitle(L"Cashew Window " + fpsText);
+			std::wstringstream os;
+			os << L"Cashew Window" << fpsText << "  X pos: " << m_window->mouse.GetPosX() << " Y pos: " << m_window->mouse.GetPosY();
+			m_window->SetTitle(os.str());
 	
 		}
 		
 		return fpsText;
 	}
+
+	
 
 	void Application::Init()
 	{

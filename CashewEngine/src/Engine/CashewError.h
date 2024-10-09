@@ -19,8 +19,7 @@ namespace Cashew
 	inline void ErrorCallback(D3D12_MESSAGE_CATEGORY Category, D3D12_MESSAGE_SEVERITY Severity, D3D12_MESSAGE_ID ID, LPCSTR pDescription, void* pContext)
 	{
 		static int flag = 0;
-		flag++;
-		if (flag > 300)
+		if (flag > 50)
 		{
 			switch (Severity)
 			{
@@ -35,11 +34,7 @@ namespace Cashew
 			case D3D12_MESSAGE_SEVERITY_WARNING:
 				ENGINE_WARN("{}, Severity= {}", pDescription, "WARNING");
 				flag = 0;
-				break;
-			case D3D12_MESSAGE_SEVERITY_INFO:
-				ENGINE_INFO("{}, Severity= {}", pDescription, "INFO");
-				flag = 0;
-				break;
+				break;				
 			case D3D12_MESSAGE_SEVERITY_MESSAGE:
 				ENGINE_DEBUG("{}, Severity= {}", pDescription, "MESSAGE");
 				flag = 0;
@@ -48,8 +43,8 @@ namespace Cashew
 				flag = 0;
 				break;
 			}
-				
 		}
+		flag++;
 	}
 
 	extern Microsoft::WRL::ComPtr<ID3D12InfoQueue1> D3D12InfoQueue;
