@@ -1,9 +1,9 @@
 #pragma once
+#include "Cashewpch.h"
 
 
 #include "Mouse.h"
-#include "Log.h"
-#include <Windows.h>
+
 
 namespace Cashew
 {

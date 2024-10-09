@@ -1,9 +1,7 @@
+#include "Cashewpch.h"
 #include "Application.h"
-#include <iostream>
-#include <sstream>
 #include "Window.h"
-#include "Log.h"
-#include "CashewError.h"
+
 
 namespace Cashew
 {
