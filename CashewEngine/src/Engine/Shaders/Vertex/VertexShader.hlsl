@@ -4,12 +4,18 @@ struct Output
     float4 outPosition : SV_Position;
 };
 
-Output main(float3 pos: POSITION, float3 incolor : COLOR)
+struct Rotation
+{
+    matrix transform;
+};
+
+ConstantBuffer<Rotation> rot : register(b0);
+
+Output main(float3 inpos: POSITION)
 {
     Output vertexOut;
     
-    vertexOut.outPosition = float4(pos, 1.0f);
-    vertexOut.outColor = float4(incolor, 1.0f);
+    vertexOut.outPosition = mul(float4(inpos, 1.0f), rot.transform);
     
     return vertexOut;
 }
