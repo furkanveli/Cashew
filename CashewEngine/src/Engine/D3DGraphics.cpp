@@ -1,3 +1,5 @@
+#include "Cashewpch.h"
+
 #include "D3DGraphics.h"
 
 namespace Cashew
@@ -402,64 +404,6 @@ namespace Cashew
 		CreateRootAndPipeline();
 	}
 
-	void D3DGraphics::Render(const CashewTimer& timer, unsigned int x, unsigned int y)
-	{
-		static float t = 0;
-	//	if (t > 360)
-	//		t = 0;
-		// get current buffer index and get a reference to the back buffer. Reset the allocator and the list before we start
-		m_curBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-		auto& backBuffer = m_backBuffers[m_curBackBufferIndex];
-		m_commandAllocator->Reset() >> chk;
-		m_commandList->Reset(m_commandAllocator.Get(), nullptr);
-
-		const auto presentToTarget = CD3DX12_RESOURCE_BARRIER::Transition(backBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		m_commandList->ResourceBarrier(1, &presentToTarget);
-
-		FLOAT clearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), (INT)m_curBackBufferIndex, m_rtvDescriptorSize);
-		const CD3DX12_CPU_DESCRIPTOR_HANDLE dsv(m_dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-		m_commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
-		m_commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-		m_commandList->SetPipelineState(m_pipelineState.Get());
-		m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-
-		m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-		m_commandList->IASetIndexBuffer(&m_indexBufferView);
-		m_commandList->RSSetViewports(1, &m_viewport);
-		m_commandList->RSSetScissorRects(1, &m_scissorRect);
-
-		m_commandList->OMSetRenderTargets(1, &rtv, TRUE, &dsv);
-
-		auto translate1 = XMMatrixRotationZ(t);
-		auto mvp1 = XMMatrixTranspose(translate1 * m_viewProjection);
-		
-		m_commandList->SetGraphicsRoot32BitConstants(0, sizeof(mvp1) / sizeof(float), &mvp1, 0); 
-		m_commandList->SetGraphicsRootConstantBufferView(1, m_colorBuffer->GetGPUVirtualAddress());
-		m_commandList->DrawIndexedInstanced(m_indexArray.size(), 1, 0, 0, 0);
-		//** present and end **
-		auto translate2 = XMMatrixRotationY(t);
-		auto mvp2 = XMMatrixTranspose( translate2 * m_viewProjection);
-		m_commandList->SetGraphicsRoot32BitConstants(0, sizeof(mvp2) / sizeof(float), &mvp2, 0);
-		m_commandList->DrawIndexedInstanced(m_indexArray.size(), 1, 0, 0, 0);
-
-		const auto TargetToPresent = CD3DX12_RESOURCE_BARRIER::Transition(backBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-		m_commandList->ResourceBarrier(1, &TargetToPresent);
-
-
-		m_commandList->Close() >> chk;
-		ID3D12CommandList* const commandLists[] = { m_commandList.Get() };
-		m_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
-
-		m_swapChain->Present(1, 0) >> chk;
-		//** present and end **
-		t = t + 0.03;
-
-		WaitForSignal();
-	}
-
 	unsigned int D3DGraphics::GetWidth()
 	{
 		return m_width;
@@ -552,5 +496,62 @@ namespace Cashew
 
 			WaitForSignal();
 		}
+	}
+
+	void D3DGraphics::Render(const CashewTimer& timer, unsigned int x, unsigned int y)
+	{
+		static float t = 0;
+		//	if (t > 360)
+		//		t = 0;
+			// get current buffer index and get a reference to the back buffer. Reset the allocator and the list before we start
+		m_curBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+		auto& backBuffer = m_backBuffers[m_curBackBufferIndex];
+		m_commandAllocator->Reset() >> chk;
+		m_commandList->Reset(m_commandAllocator.Get(), nullptr);
+
+		const auto presentToTarget = CD3DX12_RESOURCE_BARRIER::Transition(backBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		m_commandList->ResourceBarrier(1, &presentToTarget);
+
+		FLOAT clearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		const CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), (INT)m_curBackBufferIndex, m_rtvDescriptorSize);
+		const CD3DX12_CPU_DESCRIPTOR_HANDLE dsv(m_dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+		m_commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+		m_commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+		m_commandList->SetPipelineState(m_pipelineState.Get());
+		m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+		m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+		m_commandList->IASetIndexBuffer(&m_indexBufferView);
+		m_commandList->RSSetViewports(1, &m_viewport);
+		m_commandList->RSSetScissorRects(1, &m_scissorRect);
+
+		m_commandList->OMSetRenderTargets(1, &rtv, TRUE, &dsv);
+
+		auto translate1 = XMMatrixRotationZ(t) * XMMatrixRotationY(t);
+		auto mvp1 = XMMatrixTranspose(translate1 * m_viewProjection);
+
+		m_commandList->SetGraphicsRoot32BitConstants(0, sizeof(mvp1) / sizeof(float), &mvp1, 0);
+		m_commandList->SetGraphicsRootConstantBufferView(1, m_colorBuffer->GetGPUVirtualAddress());
+		m_commandList->DrawIndexedInstanced(m_indexArray.size(), 1, 0, 0, 0);
+		//** present and end **
+		auto translate2 = XMMatrixRotationZ(t /2) * XMMatrixRotationY(t /2);
+		auto mvp2 = XMMatrixTranspose(translate2 * m_viewProjection);
+		m_commandList->SetGraphicsRoot32BitConstants(0, sizeof(mvp2) / sizeof(float), &mvp2, 0);
+		m_commandList->DrawIndexedInstanced(m_indexArray.size(), 1, 0, 0, 0);
+
+		const auto TargetToPresent = CD3DX12_RESOURCE_BARRIER::Transition(backBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		m_commandList->ResourceBarrier(1, &TargetToPresent);
+
+
+		m_commandList->Close() >> chk;
+		ID3D12CommandList* const commandLists[] = { m_commandList.Get() };
+		m_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+		m_swapChain->Present(1, 0) >> chk;
+		//** present and end **
+		t = t + 0.06;
+		WaitForSignal();
 	}
 }

@@ -1,5 +1,5 @@
-#include "Log.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "Cashewpch.h"
+
 
 namespace Cashew
 {

@@ -17,6 +17,9 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
         targetdir ("bin/" .. outputdir .. "/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+        pchheader "Cashewpch.h"
+        pchsource "CashewEngine/src/Cashewpch.cpp"
+
         files
         {
             "%{prj.name}/src/*.h",
@@ -25,6 +28,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
         includedirs
         {
+            "%{prj.name}/src",
             "%{prj.name}/TPD/spdlog/include"
         }
 
