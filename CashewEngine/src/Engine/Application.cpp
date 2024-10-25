@@ -55,7 +55,7 @@ namespace Cashew
 	{
 		m_window->m_timer.Tick();
 		CalcFPS();
-		m_gfx->Render(m_window->m_timer, m_window->mouse.GetPosX(), m_window->mouse.GetPosY());
+		m_gfx->Render(m_window->m_timer, m_window->kbd, m_window->mouse);
 
 	}
 
