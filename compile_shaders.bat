@@ -13,14 +13,14 @@ set outputDir=CashewEngine\src\Engine\Shaders\ShadersCompiled
 
 for %%f in ("%VshaderDir%\*.hlsl") do (
     echo Compiling %%f...
-    dxc.exe -T vs_5_1 -E main -Fo "%outputDir%\%%~nf.cso" "%%f"
+    dxc.exe -T vs_5_1 -E main -Fo "%outputDir%\%%~nf.cso" "%%f" -Zi -Od
 )
 for %%f in ("%PshaderDir%\*.hlsl") do (
     echo Compiling %%f...
-    dxc.exe -T ps_5_1 -E main -Fo "%outputDir%\%%~nf.cso" "%%f"
+    dxc.exe -T ps_5_1 -E main -Fo "%outputDir%\%%~nf.cso" "%%f" -Zi -Od
 )
 
-echo Compilation complete.
+echo Compilation complete from batch script.
 
 REM Return to the original directory
 cd /d "%orig_dir%"

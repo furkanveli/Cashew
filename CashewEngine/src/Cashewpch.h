@@ -26,6 +26,7 @@
 #include "d3d12sdklayers.h"
 #include "dxgidebug.h"
 #include <DirectXMath.h>
+#include "DirectXColors.h"
 #include <wrl.h>
 
 // project specific headers
